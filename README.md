@@ -21,17 +21,14 @@ Folder(s) ──> Scanner ──> Text Extractor ──> Chunker ──> mem0 RE
 
 - **Python 3.10+**
 - **mem0** running locally in Docker, exposed on port 8000 (see [mem0 self-hosting docs](https://docs.mem0.ai/open-source))
-- **Tesseract OCR** (optional) — required only if you want to extract text from images. Install via:
-  - Windows: [UB Mannheim installer](https://github.com/UB-Mannheim/tesseract/wiki)
-  - macOS: `brew install tesseract`
-  - Linux: `sudo apt install tesseract-ocr`
+- **Tesseract OCR** (optional) — required only if you want to extract text from images. See [Installing Tesseract](#installing-tesseract) below.
 
 ## Quick Start
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/mem0-path-document-ingestion.git
-cd mem0-path-document-ingestion
+git clone https://github.com/winoiknow/mem0-document-ingest.git
+cd mem0-document-ingest
 
 # Install dependencies
 pip install -r requirements.txt
@@ -133,6 +130,74 @@ Image OCR is optional and gracefully degrades:
 - If `ocr_enabled: false`, images are skipped entirely.
 
 No other functionality is affected if Tesseract is absent.
+
+## Installing Tesseract
+
+Tesseract is only needed if you want OCR for image files. If you don't need it, set `ocr_enabled: false` in `config.yaml` and skip this section.
+
+### Windows
+
+1. Download the installer from [UB Mannheim](https://github.com/UB-Mannheim/tesseract/wiki) (recommended) — choose the 64-bit `.exe`.
+2. Run the installer. The default install path is `C:\Program Files\Tesseract-OCR`.
+3. During installation, optionally select additional language packs under "Additional script data" if you need non-English OCR.
+4. Add Tesseract to your system PATH:
+   - Open **Settings > System > About > Advanced system settings > Environment Variables**.
+   - Under **System variables**, select `Path` and click **Edit**.
+   - Add `C:\Program Files\Tesseract-OCR`.
+   - Click **OK** to save.
+5. Verify the installation in a new terminal:
+   ```powershell
+   tesseract --version
+   ```
+
+If you prefer not to modify PATH, you can set the executable path directly in your environment before running the service:
+
+```powershell
+$env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"
+```
+
+Or configure pytesseract in Python by setting `pytesseract.pytesseract.tesseract_cmd` (see [pytesseract docs](https://github.com/madmaze/pytesseract#usage)).
+
+### macOS
+
+```bash
+brew install tesseract
+```
+
+To add language packs:
+
+```bash
+brew install tesseract-lang
+```
+
+### Linux (Debian/Ubuntu)
+
+```bash
+sudo apt update
+sudo apt install tesseract-ocr
+```
+
+For additional languages (e.g., German, French, Spanish):
+
+```bash
+sudo apt install tesseract-ocr-deu tesseract-ocr-fra tesseract-ocr-spa
+```
+
+### Linux (Fedora/RHEL)
+
+```bash
+sudo dnf install tesseract
+```
+
+### Verifying Installation
+
+After installing, confirm Tesseract is available:
+
+```bash
+tesseract --version
+```
+
+You should see output like `tesseract 5.x.x`. The service will automatically detect and use it on the next run.
 
 ## Logging
 
