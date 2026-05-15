@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# Runtime artifacts
+ingestion_manifest.db
+ingestion_manifest.db-wal
+ingestion_manifest.db-shm
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Project planning files (not part of the application)
+goal.txt
+assumptions.txt
+resources.md
