@@ -37,11 +37,27 @@ pip install -r requirements.txt
 # Update `folders` to point to your document directories
 nano config.yaml
 
-# Run the service
+# Run the service (polls every 60 min by default from config.yaml)
 python main.py
+
+# Override the poll interval at runtime (e.g. every 5 minutes)
+python main.py --interval 5
+
+# Use sub-minute intervals (e.g. every 30 seconds)
+python main.py --interval 0.5
+
+# Run a single scan and exit (useful for cron or manual runs)
+python main.py --once
 ```
 
 The service runs an immediate scan on startup, then polls at the configured interval.
+
+### CLI Options
+
+| Flag | Description |
+|------|-------------|
+| `--interval <minutes>` | Override the poll interval from `config.yaml`. Accepts decimals (e.g. `0.5` = 30 seconds). |
+| `--once` | Run a single ingestion pass and exit immediately. Useful for cron jobs or one-off runs. |
 
 ## Configuration
 

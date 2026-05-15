@@ -1,3 +1,4 @@
+import argparse
 import logging
 import time
 from pathlib import Path
@@ -87,13 +88,34 @@ def run_ingestion():
     logger.info(f"Ingestion run complete: {processed} processed, {failed} failed")
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="mem0 document ingestion service")
+    parser.add_argument(
+        "--interval",
+        type=float,
+        default=None,
+        help="Poll interval in minutes (overrides config.yaml). Accepts decimals, e.g. 0.5 for 30 seconds.",
+    )
+    parser.add_argument(
+        "--once",
+        action="store_true",
+        help="Run a single ingestion pass and exit (no scheduling).",
+    )
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
     config = load_config()
-    interval_minutes = config.get("poll_interval_minutes", 60)
+    interval_minutes = args.interval if args.interval is not None else config.get("poll_interval_minutes", 60)
+
+    if args.once:
+        logger.info("Running single ingestion pass (--once)")
+        run_ingestion()
+        return
 
     logger.info(f"Document ingestion service starting (poll every {interval_minutes} min)")
 
-    # Run immediately on startup
     run_ingestion()
 
     scheduler = BlockingScheduler()
